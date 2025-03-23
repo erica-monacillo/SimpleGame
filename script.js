@@ -22,9 +22,14 @@ function adjustScreen() {
         canvas.height = 500;
         controls.style.display = "none";
     }
-    basket.y = canvas.height - 50;
-    basket.x = canvas.width / 2 - basket.width / 2;
+
+    // Ensure basket is always at the bottom
+    basket.width = 90;
+    basket.height = 15;
+    basket.x = (canvas.width - basket.width) / 2;
+    basket.y = canvas.height - basket.height - 10;  // Fix here
 }
+
 
 window.addEventListener("load", adjustScreen);
 window.addEventListener("resize", adjustScreen);
@@ -107,7 +112,11 @@ function restartGame() {
     head.x = Math.random() * (canvas.width - 60);
     head.image = headImages[Math.floor(Math.random() * headImages.length)];
     head.speed = 2.5;
-    basket.x = canvas.width / 2 - basket.width / 2;
+
+    // Fix basket position on restart
+    basket.x = (canvas.width - basket.width) / 2;
+    basket.y = canvas.height - basket.height - 10;
+
     gameOverScreen.style.display = "none";
     gameLoop();
 }
@@ -164,6 +173,7 @@ function draw() {
 }
 
 function gameLoop() {
+    adjustScreen();  // Ensures canvas size updates correctly
     update();
     draw();
     if (!gameOver) {
