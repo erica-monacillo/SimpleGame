@@ -2,7 +2,7 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 const gameContainer = document.querySelector(".game-container");
-const controls = document.querySelector(".controls");
+const controls = document.querySelector(".controls"); 
 const leftBtn = document.getElementById("leftBtn");
 const rightBtn = document.getElementById("rightBtn");
 
@@ -22,30 +22,15 @@ function adjustScreen() {
         canvas.height = 500;
         controls.style.display = "none";
     }
-}
-
-// Call adjustScreen before defining the basket
-adjustScreen();
-
-// Game Variables
-let basket = {
-    x: canvas.width / 2 - 45,
-    y: canvas.height - 25, // Ensure it's at the bottom
-    width: 90,
-    height: 15
-};
-
-// Update basket position when screen resizes
-function adjustBasketPosition() {
-    basket.y = canvas.height - basket.height - 10;
+    basket.y = canvas.height - 50;
     basket.x = canvas.width / 2 - basket.width / 2;
 }
 
-window.addEventListener("resize", () => {
-    adjustScreen();
-    adjustBasketPosition();
-});
+window.addEventListener("load", adjustScreen);
+window.addEventListener("resize", adjustScreen);
 
+// Game Variables
+let basket = { x: canvas.width / 2 - 45, y: canvas.height - 50, width: 90, height: 15 };
 let score = 0;
 let gameOver = false;
 
@@ -63,15 +48,20 @@ const headImages = headImagesSrc.map((src) => {
     return img;
 });
 
-// Single falling head
-let head = {
-    x: Math.random() * (canvas.width - 60),
-    y: 0,
-    width: 60,
-    height: 60,
-    speed: 2.5,
-    image: headImages[Math.floor(Math.random() * headImages.length)]
-};
+let heads = [];
+const numHeads = 5; // Number of falling heads at a time
+
+// Generate heads
+for (let i = 0; i < numHeads; i++) {
+    heads.push({
+        x: Math.random() * (canvas.width - 60),
+        y: Math.random() * -canvas.height, // Spread them out
+        width: 60,
+        height: 60,
+        speed: 2.5 + Math.random(),
+        image: headImages[Math.floor(Math.random() * headImages.length)]
+    });
+}
 
 const gameOverScreen = document.getElementById("gameOverScreen");
 const finalScore = document.getElementById("finalScore");
@@ -118,11 +108,11 @@ function stopGame() {
 function restartGame() {
     gameOver = false;
     score = 0;
-    head.y = 0;
-    head.x = Math.random() * (canvas.width - 60);
-    head.image = headImages[Math.floor(Math.random() * headImages.length)];
-    head.speed = 2.5;
-    basket.x = canvas.width / 2 - basket.width / 2;
+    heads.forEach((head) => {
+        head.y = Math.random() * -canvas.height;
+        head.x = Math.random() * (canvas.width - 60);
+        head.image = headImages[Math.floor(Math.random() * headImages.length)];
+    });
     gameOverScreen.style.display = "none";
     gameLoop();
 }
@@ -131,36 +121,33 @@ function update() {
     if (gameOver) return;
 
     moveBasket();
-    head.y += head.speed;
 
-    // **Better Collision Detection** to prevent "mo lusot siya" issue
-    if (
-        head.y + head.height >= basket.y && // Head reaches basket
-        head.y + head.height <= basket.y + basket.height && // Ensures no overshoot
-        head.x + head.width > basket.x && // Head is within basket's left side
-        head.x < basket.x + basket.width // Head is within basket's right side
-    ) {
-        score++;
+    heads.forEach((head) => {
+        head.y += head.speed;
 
-        // **Make sure the new head doesn’t spawn near the edges**
-        let newX;
-        do {
-            newX = Math.random() * (canvas.width - head.width);
-        } while (newX < 10 || newX > canvas.width - head.width - 10); // Avoid spawning too close to edges
+        // Increase speed as score increases
+        if (score > 5) head.speed = 3;
+        if (score > 10) head.speed = 3.5;
+        if (score > 15) head.speed = 4;
+        if (score > 20) head.speed = 4.5;
 
-        // **Reset the head position and select a new random image**
-        head.y = 0;
-        head.x = newX;
-        head.image = headImages[Math.floor(Math.random() * headImages.length)];
-        
-        // **Smooth Speed Scaling**
-        head.speed = 2.5 + Math.min(score * 0.1, 3); // Max speed increase
-    }
+        // If head falls without being caught
+        if (head.y > canvas.height) {
+            stopGame();
+        }
 
-    // **Fix Falling Through Issue**
-    if (head.y > canvas.height) {
-        stopGame();
-    }
+        // If head is caught by basket
+        if (
+            head.y + head.height >= basket.y &&
+            head.x > basket.x &&
+            head.x < basket.x + basket.width
+        ) {
+            score++;
+            head.y = Math.random() * -canvas.height;
+            head.x = Math.random() * (canvas.width - 60);
+            head.image = headImages[Math.floor(Math.random() * headImages.length)];
+        }
+    });
 }
 
 function draw() {
@@ -168,8 +155,10 @@ function draw() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw falling head
-    ctx.drawImage(head.image, head.x, head.y, head.width, head.height);
+    // Draw all falling heads
+    heads.forEach((head) => {
+        ctx.drawImage(head.image, head.x, head.y, head.width, head.height);
+    });
 
     // Draw basket
     ctx.fillStyle = "black";
@@ -184,9 +173,9 @@ function draw() {
 function gameLoop() {
     update();
     draw();
-    requestAnimationFrame(gameLoop);
+    if (!gameOver) {
+        requestAnimationFrame(gameLoop);
+    }
 }
 
-// Ensure the basket is properly placed at the start
-adjustBasketPosition();
 gameLoop();
