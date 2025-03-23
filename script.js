@@ -22,8 +22,12 @@ function adjustScreen() {
         canvas.height = 500;
         controls.style.display = "none"; // Hide mobile buttons
     }
-    basket.x = canvas.width / 2 - basket.width / 2; // Center basket on resize
+
+    // Ensure basket is always at the bottom after resizing
+    basket.y = canvas.height - 50; 
+    basket.x = canvas.width / 2 - basket.width / 2;
 }
+
 
 // Call adjustScreen on page load
 window.addEventListener("load", adjustScreen);
