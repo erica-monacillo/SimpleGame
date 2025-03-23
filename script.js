@@ -22,18 +22,30 @@ function adjustScreen() {
         canvas.height = 500;
         controls.style.display = "none";
     }
+}
 
-    // **Ensure basket stays at the bottom of the screen**
-    basket.y = canvas.height - basket.height - 10; // 10px above the bottom
+// Call adjustScreen before defining the basket
+adjustScreen();
+
+// Game Variables
+let basket = {
+    x: canvas.width / 2 - 45,
+    y: canvas.height - 25, // Ensure it's at the bottom
+    width: 90,
+    height: 15
+};
+
+// Update basket position when screen resizes
+function adjustBasketPosition() {
+    basket.y = canvas.height - basket.height - 10;
     basket.x = canvas.width / 2 - basket.width / 2;
 }
 
+window.addEventListener("resize", () => {
+    adjustScreen();
+    adjustBasketPosition();
+});
 
-window.addEventListener("load", adjustScreen);
-window.addEventListener("resize", adjustScreen);
-
-// Game Variables
-let basket = { x: canvas.width / 2 - 45, y: canvas.height - 50, width: 90, height: 15 };
 let score = 0;
 let gameOver = false;
 
@@ -119,58 +131,6 @@ function update() {
     if (gameOver) return;
 
     moveBasket();
-
-    head.y += head.speed;
-
-    // Increase speed as score increases
-    if (score > 5) head.speed = 3;
-    if (score > 10) head.speed = 3.5;
-    if (score > 15) head.speed = 4;
-    if (score > 20) head.speed = 4.5;
-
-    // If head falls without being caught
-    if (head.y > canvas.height) {
-        stopGame();
-    }
-
-    // If head is caught by basket
-    if (
-        head.y + head.height >= basket.y &&
-        head.x > basket.x &&
-        head.x < basket.x + basket.width
-    ) {
-        score++;
-
-        // Reset the head position and pick a new random image
-        head.y = 0;
-        head.x = Math.random() * (canvas.width - 60);
-        head.image = headImages[Math.floor(Math.random() * headImages.length)];
-    }
-}
-
-function draw() {
-    if (gameOver) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw falling head
-    ctx.drawImage(head.image, head.x, head.y, head.width, head.height);
-
-    // Draw basket
-    ctx.fillStyle = "black";
-    ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
-
-    // Draw score
-    ctx.fillStyle = "black";
-    ctx.font = "20px Arial";
-    ctx.fillText("Score: " + score, 10, 20);
-}
-
-function update() {
-    if (gameOver) return;
-
-    moveBasket();
-
     head.y += head.speed;
 
     // **Better Collision Detection** to prevent "mo lusot siya" issue
@@ -203,5 +163,30 @@ function update() {
     }
 }
 
+function draw() {
+    if (gameOver) return;
 
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw falling head
+    ctx.drawImage(head.image, head.x, head.y, head.width, head.height);
+
+    // Draw basket
+    ctx.fillStyle = "black";
+    ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+    // Draw score
+    ctx.fillStyle = "black";
+    ctx.font = "20px Arial";
+    ctx.fillText("Score: " + score, 10, 20);
+}
+
+function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+// Ensure the basket is properly placed at the start
+adjustBasketPosition();
 gameLoop();
