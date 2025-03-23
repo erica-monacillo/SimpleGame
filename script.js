@@ -164,11 +164,13 @@ function draw() {
 }
 
 function gameLoop() {
+    adjustScreen();  // Ensure proper screen adjustments
     update();
     draw();
     if (!gameOver) {
         requestAnimationFrame(gameLoop);
     }
 }
+
 
 gameLoop();
