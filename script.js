@@ -22,9 +22,12 @@ function adjustScreen() {
         canvas.height = 500;
         controls.style.display = "none";
     }
-    basket.y = canvas.height - 50;
+
+    // **Ensure basket stays at the bottom of the screen**
+    basket.y = canvas.height - basket.height - 10; // 10px above the bottom
     basket.x = canvas.width / 2 - basket.width / 2;
 }
+
 
 window.addEventListener("load", adjustScreen);
 window.addEventListener("resize", adjustScreen);
