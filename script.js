@@ -14,17 +14,20 @@ function isMobileDevice() {
 // Adjust game size for mobile
 function adjustScreen() {
     if (isMobileDevice()) {
-        canvas.width = window.innerWidth * 0.9;
-        canvas.height = window.innerHeight * 0.7;
-        controls.style.display = "flex";
+        canvas.width = window.innerWidth * 0.9; // 90% of screen width
+        canvas.height = window.innerHeight * 0.7; // 70% of screen height
+        controls.style.display = "flex"; // Show mobile buttons
     } else {
-        canvas.width = 400;
+        canvas.width = 400; // Default for desktop
         canvas.height = 500;
-        controls.style.display = "none";
+        controls.style.display = "none"; // Hide mobile buttons
     }
-    basket.y = canvas.height - 50;
+
+    // Ensure basket is always at the bottom after resizing
+    basket.y = canvas.height - 50; 
     basket.x = canvas.width / 2 - basket.width / 2;
 }
+
 
 window.addEventListener("load", adjustScreen);
 window.addEventListener("resize", adjustScreen);
