@@ -1,84 +1,12 @@
-/* Global Styling */
-body {
-    text-align: center;
-    background: linear-gradient(120deg, #2980b9, #6dd5fa);
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-}
-
-/* Game Title */
-h1 {
-    color: white;
-    font-size: 36px;
-    margin-bottom: 10px;
-}
-
-/* Game Container */
-.game-container {
-    position: relative;
-    display: inline-block;
-}
-
-/* Game Canvas */
+/* Make Game Responsive */
 canvas {
-    background-color: white;
-    border-radius: 10px;
-    border: 3px solid black;
-}
-
-/* Game Over Screen */
-#gameOverScreen {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    text-align: center;
-    padding: 20px;
-    border-radius: 10px;
-    display: none;
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-/* Game Over Message */
-#gameOverScreen h2 {
-    font-size: 30px;
-    color: red;
-    margin: 0;
-}
-
-/* Final Score */
-#gameOverScreen p {
-    font-size: 22px;
-    margin: 10px 0;
-}
-
-/* Restart Button */
-button {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 18px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    background-color: darkred;
+    max-width: 100%;
+    height: auto;
 }
 
 /* Mobile Controls */
 .controls {
-    display: flex;
+    display: none; /* Hide on desktop, show on mobile */
     justify-content: center;
     margin-top: 10px;
 }
@@ -97,16 +25,4 @@ button:hover {
 
 .controls button:hover {
     background-color: darkgray;
-}
-
-/* Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -55%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
 }
