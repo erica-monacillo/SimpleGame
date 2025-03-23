@@ -15,7 +15,16 @@ headImage.src = "head.png"; // Replace with an actual image of a head
 const gameOverScreen = document.getElementById("gameOverScreen");
 const finalScore = document.getElementById("finalScore");
 
+// Get buttons for mobile
+const leftBtn = document.getElementById("leftBtn");
+const rightBtn = document.getElementById("rightBtn");
+
+// Keyboard movement
 document.addEventListener("keydown", moveBasket);
+
+// Touch button movement
+leftBtn.addEventListener("touchstart", () => moveBasket({ key: "ArrowLeft" }));
+rightBtn.addEventListener("touchstart", () => moveBasket({ key: "ArrowRight" }));
 
 function moveBasket(e) {
     if (!gameOver) {

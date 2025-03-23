@@ -76,6 +76,29 @@ button:hover {
     background-color: darkred;
 }
 
+/* Mobile Controls */
+.controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.controls button {
+    background-color: black;
+    color: white;
+    font-size: 30px;
+    border: none;
+    padding: 15px 30px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.controls button:hover {
+    background-color: darkgray;
+}
+
 /* Animation */
 @keyframes fadeIn {
     from {
