@@ -11,31 +11,8 @@ function isMobileDevice() {
     return /Mobi|Android|iPhone/i.test(navigator.userAgent);
 }
 
-// Adjust game size for mobile
-function adjustScreen() {
-    if (isMobileDevice()) {
-        canvas.width = window.innerWidth * 0.9;
-        canvas.height = window.innerHeight * 0.7;
-        controls.style.display = "flex";
-    } else {
-        canvas.width = 400;
-        canvas.height = 500;
-        controls.style.display = "none";
-    }
-
-    // Ensure basket is always at the bottom
-    basket.width = 90;
-    basket.height = 15;
-    basket.x = (canvas.width - basket.width) / 2;
-    basket.y = canvas.height - basket.height - 10;  // Fix here
-}
-
-
-window.addEventListener("load", adjustScreen);
-window.addEventListener("resize", adjustScreen);
-
 // Game Variables
-let basket = { x: canvas.width / 2 - 45, y: canvas.height - 50, width: 90, height: 15 };
+let basket;
 let score = 0;
 let gameOver = false;
 
@@ -55,11 +32,7 @@ const headImages = headImagesSrc.map((src) => {
 
 // Single falling head
 let head = {
-    x: Math.random() * (canvas.width - 60),
-    y: 0,
-    width: 60,
-    height: 60,
-    speed: 2.5,
+    x: 0, y: 0, width: 60, height: 60, speed: 2.5,
     image: headImages[Math.floor(Math.random() * headImages.length)]
 };
 
@@ -69,6 +42,28 @@ const finalScore = document.getElementById("finalScore");
 // Movement Controls
 let moveLeft = false;
 let moveRight = false;
+
+// Adjust game size for mobile
+function adjustScreen() {
+    if (isMobileDevice()) {
+        canvas.width = window.innerWidth * 0.9;
+        canvas.height = window.innerHeight * 0.7;
+        controls.style.display = "flex";
+    } else {
+        canvas.width = 400;
+        canvas.height = 500;
+        controls.style.display = "none";
+    }
+
+    // Initialize basket inside adjustScreen() to ensure correct positioning
+    basket = { 
+        width: 90, height: 15, 
+        x: (canvas.width - 90) / 2, 
+        y: canvas.height - 25 
+    };
+
+    head.x = Math.random() * (canvas.width - head.width);
+}
 
 // Keyboard movement
 document.addEventListener("keydown", (e) => {
@@ -81,16 +76,10 @@ document.addEventListener("keyup", (e) => {
 });
 
 // Mobile Button movement
-leftBtn.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    moveLeft = true;
-});
-rightBtn.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    moveRight = true;
-});
-leftBtn.addEventListener("touchend", () => (moveLeft = false));
-rightBtn.addEventListener("touchend", () => (moveRight = false));
+leftBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveLeft = true; });
+rightBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveRight = true; });
+leftBtn.addEventListener("touchend", () => moveLeft = false);
+rightBtn.addEventListener("touchend", () => moveRight = false);
 
 function moveBasket() {
     if (!gameOver) {
@@ -109,13 +98,13 @@ function restartGame() {
     gameOver = false;
     score = 0;
     head.y = 0;
-    head.x = Math.random() * (canvas.width - 60);
+    head.x = Math.random() * (canvas.width - head.width);
     head.image = headImages[Math.floor(Math.random() * headImages.length)];
     head.speed = 2.5;
 
-    // Fix basket position on restart
+    // Reset basket position
     basket.x = (canvas.width - basket.width) / 2;
-    basket.y = canvas.height - basket.height - 10;
+    basket.y = canvas.height - 25;
 
     gameOverScreen.style.display = "none";
     gameLoop();
@@ -125,7 +114,6 @@ function update() {
     if (gameOver) return;
 
     moveBasket();
-
     head.y += head.speed;
 
     // Increase speed as score increases
@@ -149,7 +137,7 @@ function update() {
 
         // Reset the head position and pick a new random image
         head.y = 0;
-        head.x = Math.random() * (canvas.width - 60);
+        head.x = Math.random() * (canvas.width - head.width);
         head.image = headImages[Math.floor(Math.random() * headImages.length)];
     }
 }
@@ -173,7 +161,6 @@ function draw() {
 }
 
 function gameLoop() {
-    adjustScreen();  // Ensures canvas size updates correctly
     update();
     draw();
     if (!gameOver) {
@@ -181,4 +168,9 @@ function gameLoop() {
     }
 }
 
-gameLoop();
+// Ensure everything initializes correctly
+window.addEventListener("load", () => {
+    adjustScreen();
+    gameLoop();
+});
+window.addEventListener("resize", adjustScreen);
