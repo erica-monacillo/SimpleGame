@@ -17,6 +17,7 @@ h1 {
     color: white;
     font-size: 36px;
     margin-bottom: 10px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 /* Game Container */
@@ -30,6 +31,8 @@ canvas {
     background-color: white;
     border-radius: 10px;
     border: 3px solid black;
+    max-width: 100%;
+    height: auto;
 }
 
 /* Game Over Screen */
@@ -37,82 +40,117 @@ canvas {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.9);
+    transform: translate(-50%, -50%) scale(0.8);
+    background: rgba(0, 0, 0, 0.85);
     color: white;
     text-align: center;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 25px;
+    border-radius: 12px;
     display: none;
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.5s ease-in-out forwards;
 }
 
 /* Game Over Message */
 #gameOverScreen h2 {
-    font-size: 30px;
+    font-size: 34px;
     color: red;
-    margin: 0;
+    font-weight: bold;
+    margin: 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 /* Final Score */
 #gameOverScreen p {
-    font-size: 22px;
+    font-size: 24px;
+    font-weight: bold;
     margin: 10px 0;
 }
 
 /* Restart Button */
 button {
-    background-color: red;
+    background: linear-gradient(135deg, red, darkred);
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 18px;
-    border-radius: 5px;
+    padding: 12px 24px;
+    font-size: 20px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.2s, background 0.3s;
+    font-weight: bold;
 }
 
 button:hover {
-    background-color: darkred;
-}
-
-/* Make Game Responsive */
-canvas {
-    max-width: 100%;
-    height: auto;
+    background: linear-gradient(135deg, darkred, black);
+    transform: scale(1.05);
 }
 
 /* Mobile Controls */
 .controls {
     display: none; /* Hide on desktop, show on mobile */
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .controls button {
     background-color: black;
     color: white;
-    font-size: 30px;
+    font-size: 28px;
     border: none;
-    padding: 15px 30px;
+    padding: 15px 40px;
     margin: 5px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.2s, background 0.3s;
 }
 
 .controls button:hover {
     background-color: darkgray;
+    transform: scale(1.1);
 }
 
 /* Animation */
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translate(-50%, -55%);
+        transform: translate(-50%, -55%) scale(0.8);
     }
     to {
         opacity: 1;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Responsive for Mobile */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    canvas {
+        width: 90vw;
+        height: auto;
+    }
+
+    #gameOverScreen {
+        width: 80%;
+        padding: 20px;
+    }
+
+    #gameOverScreen h2 {
+        font-size: 28px;
+    }
+
+    #gameOverScreen p {
+        font-size: 20px;
+    }
+
+    button {
+        font-size: 18px;
+        padding: 10px 20px;
+    }
+
+    .controls {
+        display: flex;
     }
 }
