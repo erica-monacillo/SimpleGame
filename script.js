@@ -2,7 +2,7 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 const gameContainer = document.querySelector(".game-container");
-const controls = document.querySelector(".controls"); 
+const controls = document.querySelector(".controls");
 const leftBtn = document.getElementById("leftBtn");
 const rightBtn = document.getElementById("rightBtn");
 
@@ -48,20 +48,15 @@ const headImages = headImagesSrc.map((src) => {
     return img;
 });
 
-let heads = [];
-const numHeads = 5; // Number of falling heads at a time
-
-// Generate heads
-for (let i = 0; i < numHeads; i++) {
-    heads.push({
-        x: Math.random() * (canvas.width - 60),
-        y: Math.random() * -canvas.height, // Spread them out
-        width: 60,
-        height: 60,
-        speed: 2.5 + Math.random(),
-        image: headImages[Math.floor(Math.random() * headImages.length)]
-    });
-}
+// Single falling head
+let head = {
+    x: Math.random() * (canvas.width - 60),
+    y: 0,
+    width: 60,
+    height: 60,
+    speed: 2.5,
+    image: headImages[Math.floor(Math.random() * headImages.length)]
+};
 
 const gameOverScreen = document.getElementById("gameOverScreen");
 const finalScore = document.getElementById("finalScore");
@@ -108,11 +103,11 @@ function stopGame() {
 function restartGame() {
     gameOver = false;
     score = 0;
-    heads.forEach((head) => {
-        head.y = Math.random() * -canvas.height;
-        head.x = Math.random() * (canvas.width - 60);
-        head.image = headImages[Math.floor(Math.random() * headImages.length)];
-    });
+    head.y = 0;
+    head.x = Math.random() * (canvas.width - 60);
+    head.image = headImages[Math.floor(Math.random() * headImages.length)];
+    head.speed = 2.5;
+    basket.x = canvas.width / 2 - basket.width / 2;
     gameOverScreen.style.display = "none";
     gameLoop();
 }
@@ -122,32 +117,32 @@ function update() {
 
     moveBasket();
 
-    heads.forEach((head) => {
-        head.y += head.speed;
+    head.y += head.speed;
 
-        // Increase speed as score increases
-        if (score > 5) head.speed = 3;
-        if (score > 10) head.speed = 3.5;
-        if (score > 15) head.speed = 4;
-        if (score > 20) head.speed = 4.5;
+    // Increase speed as score increases
+    if (score > 5) head.speed = 3;
+    if (score > 10) head.speed = 3.5;
+    if (score > 15) head.speed = 4;
+    if (score > 20) head.speed = 4.5;
 
-        // If head falls without being caught
-        if (head.y > canvas.height) {
-            stopGame();
-        }
+    // If head falls without being caught
+    if (head.y > canvas.height) {
+        stopGame();
+    }
 
-        // If head is caught by basket
-        if (
-            head.y + head.height >= basket.y &&
-            head.x > basket.x &&
-            head.x < basket.x + basket.width
-        ) {
-            score++;
-            head.y = Math.random() * -canvas.height;
-            head.x = Math.random() * (canvas.width - 60);
-            head.image = headImages[Math.floor(Math.random() * headImages.length)];
-        }
-    });
+    // If head is caught by basket
+    if (
+        head.y + head.height >= basket.y &&
+        head.x > basket.x &&
+        head.x < basket.x + basket.width
+    ) {
+        score++;
+
+        // Reset the head position and pick a new random image
+        head.y = 0;
+        head.x = Math.random() * (canvas.width - 60);
+        head.image = headImages[Math.floor(Math.random() * headImages.length)];
+    }
 }
 
 function draw() {
@@ -155,10 +150,8 @@ function draw() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw all falling heads
-    heads.forEach((head) => {
-        ctx.drawImage(head.image, head.x, head.y, head.width, head.height);
-    });
+    // Draw falling head
+    ctx.drawImage(head.image, head.x, head.y, head.width, head.height);
 
     // Draw basket
     ctx.fillStyle = "black";
