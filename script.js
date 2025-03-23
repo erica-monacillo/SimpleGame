@@ -163,12 +163,42 @@ function draw() {
     ctx.fillText("Score: " + score, 10, 20);
 }
 
-function gameLoop() {
-    update();
-    draw();
-    if (!gameOver) {
-        requestAnimationFrame(gameLoop);
+function update() {
+    if (gameOver) return;
+
+    moveBasket();
+
+    head.y += head.speed;
+
+    // **Better Collision Detection** to prevent "mo lusot siya" issue
+    if (
+        head.y + head.height >= basket.y && // Head reaches basket
+        head.y + head.height <= basket.y + basket.height && // Ensures no overshoot
+        head.x + head.width > basket.x && // Head is within basket's left side
+        head.x < basket.x + basket.width // Head is within basket's right side
+    ) {
+        score++;
+
+        // **Make sure the new head doesn’t spawn near the edges**
+        let newX;
+        do {
+            newX = Math.random() * (canvas.width - head.width);
+        } while (newX < 10 || newX > canvas.width - head.width - 10); // Avoid spawning too close to edges
+
+        // **Reset the head position and select a new random image**
+        head.y = 0;
+        head.x = newX;
+        head.image = headImages[Math.floor(Math.random() * headImages.length)];
+        
+        // **Smooth Speed Scaling**
+        head.speed = 2.5 + Math.min(score * 0.1, 3); // Max speed increase
+    }
+
+    // **Fix Falling Through Issue**
+    if (head.y > canvas.height) {
+        stopGame();
     }
 }
+
 
 gameLoop();
